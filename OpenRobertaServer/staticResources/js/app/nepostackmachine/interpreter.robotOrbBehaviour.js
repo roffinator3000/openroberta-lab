@@ -81,6 +81,21 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             { reset: 0 },
         ]
     };
+    var otherMotorsConfig = {
+        Motor: [
+            { name: "M1", port: 1 },
+            { name: "M2", port: 2 },
+            { name: "M3", port: 3 },
+            { name: "M4", port: 4 },
+        ]
+    };
+    var configSensorsPorts = { Sensor: [
+            { name: "S1", port: 1 },
+            { name: "S2", port: 2 },
+            { name: "S3", port: 3 },
+            { name: "S4", port: 4 },
+        ]
+    };
     //Noch mode prüfen
     function isSensorValueValid(id) {
         if (propFromORB.Sensor[id].valid == true) {
@@ -256,6 +271,7 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
                 this.toDisplayFct({ clear: true });
             };
             _this.getSample = function (s, name, sensor, port, slot) {
+                port = this.getSensorPort(port);
                 if (sensor == 'ultrasonic') {
                     cmdConfigToORB.data.Sensor[port - 1].type = 1;
                     if (slot == 'distance') {
@@ -428,6 +444,14 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
                 return 3;
             }
         };
+        RobotOrbBehaviour.prototype.getSensorPort = function (name) {
+            for (var i = 0; i < 4; i++) {
+                if (configSensorsPorts.Sensor[i].name == name) {
+                    return configSensorsPorts.Sensor[i].port;
+                }
+            }
+            throw new Error('No Sensor');
+        };
         RobotOrbBehaviour.prototype.setSpeedToProcent = function (speed) {
             if (speed > 100) {
                 speed = 100;
@@ -444,9 +468,19 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             speed = (speed * speedMax) / 100;
             return speed;
         };
+        RobotOrbBehaviour.prototype.mapSingleMotor = function (name) {
+            for (var i = 0; i < 4; i++) {
+                if (otherMotorsConfig.Motor[i].name == name) {
+                    var port = otherMotorsConfig.Motor[i].port - 1; //TODO test ports ???
+                    return port;
+                }
+            }
+            return 9;
+        };
         RobotOrbBehaviour.prototype.motorOnAction = function (name, port, duration, durationType, speed) {
             U.debug('motorOnAction' + ' port:' + port + ' duration:' + duration + ' durationType:' + durationType + ' speed:' + speed);
-            port = this.mappPortMotor(port);
+            port = this.mapSingleMotor(name); //TODO test
+            //port = this.mappPortMotor(port);
             speed = this.setSpeedToProcent(speed);
             speed = 10 * speed;
             var timeToGo = 0;
@@ -468,6 +502,7 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
         };
         RobotOrbBehaviour.prototype.motorStopAction = function (name, port) {
             U.debug('motorStopAction' + ' port:' + port);
+            port = this.mapSingleMotor(name); //TODO test
             setMotor(port, 0, 0, 0);
             this.btInterfaceFct(cmdPropToORB);
             return 0;
@@ -611,21 +646,103 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             return 0;
         };
         RobotOrbBehaviour.prototype.setConfiguration = function (configuration) {
-            driveConfig.trackWidth = configuration.ACTUATORS.Diff.BRICK_TRACK_WIDTH;
-            driveConfig.wheelDiameter = configuration.ACTUATORS.Diff.WHEELDIAMETER;
-            if (driveConfig.wheelDiameter != 0) {
-                driveConfig.distanceToTics = 1000.0 / (10.0 * driveConfig.wheelDiameter * Math.PI);
-            }
-            var x = configuration.ACTUATORS;
-            var y = x[0];
-            var a = configuration.ACTUATORS.Diff;
-            var b = a[1];
-            this.setConfigMotors(configuration.ACTUATORS);
-            this.setConfigSensors(configuration.SENSORS);
+            this.setActuators(configuration.ACTUATORS);
             this.wait(3);
             return 0;
         };
-        RobotOrbBehaviour.prototype.setConfigSingleMotor = function (motor, idx) {
+        RobotOrbBehaviour.prototype.setActuators = function (configuration) {
+            for (var actuators in configuration) {
+                var actuator = configuration[actuators];
+                if (actuator.TYPE == "DIFFERENTIALDRIVE") {
+                    this.setDifferentialDrive(actuator);
+                }
+                if (actuator.TYPE == "MOTOR") {
+                    this.setSingleMotor(actuator, actuators);
+                }
+                else if ((actuator.TYPE != "DIFFERENTIALDRIVE") && (actuator.TYPE != "MOTOR")) {
+                    this.setSensor(actuator, actuators);
+                }
+            }
+            return 0;
+        };
+        RobotOrbBehaviour.prototype.setDifferentialDrive = function (differentialDrive) {
+            driveConfig.trackWidth = differentialDrive.BRICK_TRACK_WIDTH;
+            driveConfig.wheelDiameter = differentialDrive.WHEELDIAMETER;
+            if (driveConfig.wheelDiameter != 0) {
+                driveConfig.distanceToTics = 1000.0 / (10.0 * driveConfig.wheelDiameter * Math.PI);
+            }
+            driveConfig.motorL.port = this.mapMotorPort(differentialDrive.MOTOR_L);
+            driveConfig.motorR.port = this.mapMotorPort(differentialDrive.MOTOR_R);
+            return 0;
+        };
+        RobotOrbBehaviour.prototype.setSingleMotor = function (motor, name) {
+            var port = this.mapSensorPort(motor.MOTOR);
+            otherMotorsConfig.Motor[port - 1].port = port;
+            otherMotorsConfig.Motor[port - 1].name = name;
+            return 0;
+        };
+        RobotOrbBehaviour.prototype.setSensor = function (sensor, name) {
+            var port = this.mapSensorPort(sensor.CONNECTOR) - 1;
+            configSensorsPorts.Sensor[port].name = name;
+            configSensorsPorts.Sensor[port].port = port;
+            if (sensor.TYPE == 'TOUCH') {
+                configSensor(port, 4, 0, 0);
+                this.btInterfaceFct(cmdConfigToORB);
+            }
+            if (sensor.TYPE == 'ULTRASONIC' || sensor.TYPE == 'GYRO' || sensor.TYPE == 'INFRARED') {
+                configSensor(port, 1, 0, 0);
+                this.btInterfaceFct(cmdConfigToORB);
+            }
+            if (sensor.TYPE == 'COLOR') {
+                configSensor(port, 1, 2, 0);
+                this.btInterfaceFct(cmdConfigToORB);
+            }
+            return 0;
+        };
+        RobotOrbBehaviour.prototype.mapSensorPort = function (port) {
+            if (port == "1") {
+                return 1;
+            }
+            if (port == "2") {
+                return 2;
+            }
+            if (port == "3") {
+                return 3;
+            }
+            if (port == "4") {
+                return 4;
+            }
+        };
+        RobotOrbBehaviour.prototype.mapMotorPort = function (port) {
+            if (port == "M1") {
+                return 1;
+            }
+            if (port == "M2") {
+                return 2;
+            }
+            if (port == "M3") {
+                return 3;
+            }
+            if (port == "M4") {
+                return 4;
+            }
+        };
+        //TODO remove if test done
+        /*
+            public setConfiguration(configuration: any) {
+                driveConfig.trackWidth = configuration.ACTUATORS.Diff.BRICK_TRACK_WIDTH;
+                driveConfig.wheelDiameter = configuration.ACTUATORS.Diff.WHEELDIAMETER;
+                if (driveConfig.wheelDiameter != 0) {
+                    driveConfig.distanceToTics = 1000.0 / (10.0 * driveConfig.wheelDiameter * Math.PI);
+                }
+                this.setConfigMotors(configuration.ACTUATORS);
+                this.setConfigSensors(configuration.SENSORS);
+                this.wait(3);
+                return 0;
+            }
+        */
+        /*
+        public setConfigSingleMotor(motor: any, idx: number) {
             if (motor != undefined) {
                 if (motor.MOTOR_REVERSE == 'ON') {
                     driveConfig.orientation[idx] = -1;
@@ -633,21 +750,24 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
                 if (motor.MOTOR_DRIVE == 'RIGHT') {
                     driveConfig.motorR.port = idx;
                     driveConfig.motorR.orientation = driveConfig.orientation[idx];
-                }
-                else if (motor.MOTOR_DRIVE == 'LEFT') {
+                } else if (motor.MOTOR_DRIVE == 'LEFT') {
                     driveConfig.motorL.port = idx;
                     driveConfig.motorL.orientation = driveConfig.orientation[idx];
                 }
             }
-        };
-        RobotOrbBehaviour.prototype.setConfigMotors = function (motors) {
+        }
+    */
+        /*
+        public setConfigMotors(motors: any): number {
             this.setConfigSingleMotor(motors.A, 0);
             this.setConfigSingleMotor(motors.B, 1);
             this.setConfigSingleMotor(motors.C, 2);
             this.setConfigSingleMotor(motors.D, 3);
             return 0;
-        };
-        RobotOrbBehaviour.prototype.setConfigSensors = function (sensors) {
+        }
+    */
+        /*
+        public setConfigSensors(sensors: any): number {
             for (var i = 1; i < 5; i++) {
                 if (sensors[i] == 'TOUCH') {
                     configSensor(i, 4, 0, 0);
@@ -663,7 +783,8 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
                 }
             }
             return 0;
-        };
+        }
+    */
         RobotOrbBehaviour.prototype.wait = function (seconds) {
             var stopTime = new Date().getSeconds();
             stopTime = stopTime + seconds < 60 ? stopTime + seconds : seconds - (60 - stopTime);
@@ -672,7 +793,7 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
         };
         RobotOrbBehaviour.prototype.writePinAction = function (_pin, _mode, _value) { };
         RobotOrbBehaviour.prototype.close = function () {
-            var ids = this.getConnectedBricks();
+            var ids = this.getConnectedBricks(); //TODO:test
             for (var id in ids) {
                 if (ids.hasOwnProperty(id)) {
                     // let name = this.getBrickById(ids[id]).brickname;
@@ -687,7 +808,8 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
         };
         RobotOrbBehaviour.prototype.encoderReset = function (port) {
             U.debug('encoderReset for ' + port);
-            resetValueEncoder.Motor[this.mappPortMotor(port)].reset = getMotorPos(this.mappPortMotor(port));
+            resetValueEncoder.Motor[this.mapSingleMotor(port)].reset = getMotorPos(this.mapSingleMotor(port)); //TODO test
+            //resetValueEncoder.Motor[this.mappPortMotor(port)].reset = getMotorPos(this.mappPortMotor(port))
         };
         RobotOrbBehaviour.prototype.gyroReset = function (port) {
             U.debug('gyroReset for ' + port);
@@ -709,7 +831,8 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             throw new Error('Method not implemented.');
         };
         RobotOrbBehaviour.prototype.setMotorSpeed = function (_name, _port, _speed) {
-            var port = this.mappPortMotor(_port);
+            var port = this.mapSingleMotor(_name); //TODO test
+            //let port = this.mappPortMotor(_port);
             setMotor(port, 0, 10 * driveConfig.orientation[port] * _speed, 0);
             this.btInterfaceFct(cmdPropToORB);
         };

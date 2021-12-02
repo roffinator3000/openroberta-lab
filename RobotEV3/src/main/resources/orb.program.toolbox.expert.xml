@@ -2,7 +2,6 @@
 	<category name="TOOLBOX_ACTION" svg="true">
 		<category name="TOOLBOX_MOVE" svg="true">
 			<block type="robActions_motor_on">
-				<field name="MOTORPORT">B</field>
 				<value name="POWER">
 					<block type="math_number">
 						<field name="NUM">30</field>
@@ -10,7 +9,6 @@
 				</value>
 			</block>
 			<block type="robActions_motor_on_for">
-				<field name="MOTORPORT">M</field>
 				<value name="POWER">
 					<block type="math_number">
 						<field name="NUM">30</field>
@@ -23,10 +21,8 @@
 				</value>
 			</block>
 			<block type="robActions_motor_getPower">
-				<field name="MOTORPORT">M</field>
 			</block>
 			<block type="robActions_motor_setPower">
-				<field name="MOTORPORT">M</field>
 				<value name="POWER">
 					<block type="math_number">
 						<field name="NUM">30</field>
@@ -34,7 +30,6 @@
 				</value>
 			</block>
 			<block type="robActions_motor_stop">
-				<field name="MOTORPORT">M</field>
 			</block>
 		</category>
 		<category name="TOOLBOX_DRIVE" svg="true">

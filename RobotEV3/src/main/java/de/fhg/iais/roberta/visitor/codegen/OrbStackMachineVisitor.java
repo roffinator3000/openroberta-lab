@@ -197,8 +197,8 @@ public class OrbStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
         if ( speedOnly ) {
             return app(o);
         } else {
-            String durationType = duration.getType().toString().toLowerCase();
-            o.put(C.MOTOR_DURATION, durationType);
+            //String durationType = duration.getType().toString().toLowerCase();//TODO: like WeDo -> is okay? ->Test real Robot
+            //o.put(C.MOTOR_DURATION, durationType);
             app(o);
             return app(makeNode(C.MOTOR_STOP).put(C.PORT, port.toLowerCase()));
         }
