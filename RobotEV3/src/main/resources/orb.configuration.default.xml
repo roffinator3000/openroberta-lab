@@ -8,30 +8,42 @@
             <field name="MOTOR_R">M3</field>
         </block>
     </instance>
+    <instance x="40" y="190">
+        <block type="robConf_motor" id="2" intask="true">
+            <field name="NAME">M1</field>
+            <field name="MOTOR">2</field>
+        </block>
+    </instance>
+    <instance x="40" y="260">
+        <block type="robConf_motor" id="3" intask="true">
+            <field name="NAME">M2</field>
+            <field name="MOTOR">3</field>
+        </block>
+    </instance>
     <instance x="250" y="50">
-        <block type="robConf_infrared" id="2" intask="true">
-            <field name="NAME">S</field>
+        <block type="robConf_touch" id="4" intask="true">
+            <field name="NAME">T</field>
             <field name="VAR">W</field>
             <field name="CONNECTOR">1</field>
         </block>
     </instance>
-    <instance x="250" y="150">
-        <block type="robConf_gyro" id="3" intask="true">
-            <field name="NAME">L</field>
+    <instance x="250" y="120">
+        <block type="robConf_gyro" id="5" intask="true">
+            <field name="NAME">G</field>
             <field name="VAR">W</field>
             <field name="CONNECTOR">2</field>
         </block>
     </instance>
-    <instance x="250" y="230">
-        <block type="robConf_colour" id="4" intask="true">
-            <field name="NAME">T</field>
+    <instance x="250" y="190">
+        <block type="robConf_colour" id="6" intask="true">
+            <field name="NAME">C</field>
             <field name="VAR">W</field>
             <field name="CONNECTOR">3</field>
         </block>
     </instance>
-    <instance x="250" y="310">
-        <block type="robConf_ultrasonic" id="5" intask="true">
-            <field name="NAME">I</field>
+    <instance x="250" y="260">
+        <block type="robConf_ultrasonic" id="7" intask="true">
+            <field name="NAME">U</field>
             <field name="VAR">W</field>
             <field name="CONNECTOR">4</field>
         </block>

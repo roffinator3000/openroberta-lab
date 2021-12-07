@@ -86,7 +86,27 @@ public abstract class DifferentialMotorValidatorAndCollectorVisitorEv3 extends M
             addErrorToPhrase(driveAction, "CONFIGURATION_ERROR_MULTIPLE_RIGHT_MOTORS");
             return true;
         }
-        return false;
+        int numLeftMotors = 0;
+        int numRightMotors = 0;
+        for ( ConfigurationComponent component : robotConfiguration.getConfigurationComponentsValues() ){
+            if ( component.getComponentType().equals("MOTOR") ){
+                String motorPort = "M" + component.getOptProperty("MOTOR");
+                if (motorPort.equals(leftMotor)){
+                    numRightMotors++;
+                }else if ( motorPort.equals(rightMotor) ){
+                    numLeftMotors++;
+                }
+                if ( numRightMotors > 1 || numLeftMotors > 1 ){
+                    addErrorToPhrase(driveAction, "");
+                    return true;
+                }
+            }
+        }
+        if ( numRightMotors != 1 || numLeftMotors != 1 ){
+            addErrorToPhrase(driveAction, "CONFIGURATION_ERROR_MOTOR_MISSING");
+            return true;
+        }
+            return false;
     }
 
     private void checkAndAddLeftRightMotorPortForDiff(Phrase<Void> driveAction){
@@ -97,7 +117,7 @@ public abstract class DifferentialMotorValidatorAndCollectorVisitorEv3 extends M
         if ( checkPortsForDiff(driveAction) ) {
             return;
         }
-        usedHardwareBuilder.addUsedActor(new UsedActor(robotConfiguration.getConfigurationComponent("Diff").getOptProperty("MOTOR_L"), SC.LARGE));
+        usedHardwareBuilder.addUsedActor(new UsedActor(robotConfiguration.getConfigurationComponent("Diff").getOptProperty("MOTOR_L"), SC.LARGE));//TODO: nicht über "Diff" zugreifen
         usedHardwareBuilder.addUsedActor(new UsedActor(robotConfiguration.getConfigurationComponent("Diff").getOptProperty("MOTOR_R"), SC.LARGE));
     }
 

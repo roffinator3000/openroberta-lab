@@ -211,8 +211,6 @@ public class OrbStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
 
     @Override
     public V visitShowTextAction(ShowTextAction<V> showTextAction) {
-        showTextAction.y.accept(this);
-        showTextAction.x.accept(this);
         showTextAction.msg.accept(this);
         JSONObject o = makeNode(C.SHOW_TEXT_ACTION).put(C.NAME, "orb");
         return app(o);

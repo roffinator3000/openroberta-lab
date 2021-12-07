@@ -181,7 +181,7 @@ public class OrbValidatorAndCollectorVisitor extends CommonNepoValidatorAndColle
 
 	@Override
 	public Void visitShowTextAction(ShowTextAction<Void> showTextAction) {
-		requiredComponentVisited(showTextAction, showTextAction.msg, showTextAction.x, showTextAction.y);
+		requiredComponentVisited(showTextAction, showTextAction.msg);
 		usedHardwareBuilder.addUsedActor(new UsedActor(showTextAction.port, SC.DISPLAY));
 		return null;
 	}
