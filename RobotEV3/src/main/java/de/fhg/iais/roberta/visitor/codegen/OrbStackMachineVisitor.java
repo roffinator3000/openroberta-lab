@@ -197,8 +197,6 @@ public class OrbStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
         if ( speedOnly ) {
             return app(o);
         } else {
-            //String durationType = duration.getType().toString().toLowerCase();//TODO: like WeDo -> is okay? ->Test real Robot
-            //o.put(C.MOTOR_DURATION, durationType);
             app(o);
             return app(makeNode(C.MOTOR_STOP).put(C.PORT, port.toLowerCase()));
         }
@@ -234,7 +232,7 @@ public class OrbStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
     @Override
     public V visitEncoderSensor(EncoderSensor<V> encoderSensor) {
         String mode = encoderSensor.getMode().toLowerCase();
-        String port = encoderSensor.getUserDefinedPort().toLowerCase();
+        String port = encoderSensor.getUserDefinedPort();
         JSONObject o;
         if ( mode.equals(C.RESET) ) {
             o = makeNode(C.ENCODER_SENSOR_RESET).put(C.PORT, port).put(C.NAME, "orb");
@@ -273,7 +271,7 @@ public class OrbStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
     @Override
     public V visitGyroSensor(GyroSensor<V> gyroSensor) {
         String mode = gyroSensor.getMode().toLowerCase();
-        String port = gyroSensor.getUserDefinedPort().toLowerCase();
+        String port = gyroSensor.getUserDefinedPort();
         JSONObject o;
         if ( mode.equals(C.RESET) ) {
             o = makeNode(C.GYRO_SENSOR_RESET).put(C.PORT, port).put(C.NAME, "orb");

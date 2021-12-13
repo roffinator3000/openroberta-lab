@@ -4,8 +4,8 @@
             <field name="NAME">Diff</field>
             <field name="BRICK_WHEEL_DIAMETER">5.6</field>
             <field name="BRICK_TRACK_WIDTH">22.8</field>
-            <field name="MOTOR_L">M2</field>
-            <field name="MOTOR_R">M3</field>
+            <field name="MOTOR_L">2</field>
+            <field name="MOTOR_R">3</field>
         </block>
     </instance>
     <instance x="40" y="190">

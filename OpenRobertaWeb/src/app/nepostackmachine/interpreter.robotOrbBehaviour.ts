@@ -76,18 +76,19 @@ let resetValueEncoder = {
 
 let otherMotorsConfig = {
     Motor : [
-        {name: "M1", port: 1},
-        {name: "M2", port: 2},
-        {name: "M3", port: 3},
-        {name: "M4", port: 4},
+        {name: "", port: 0},
+        {name: "", port: 1},
+        {name: "", port: 2},
+        {name: "", port: 3},
     ]
 }
 
-let configSensorsPorts = { Sensor: [
-        {name: "S1", port: 1},
-        {name: "S2", port: 2},
-        {name: "S3", port: 3},
-        {name: "S4", port: 4},
+let configSensorsPorts = {
+    Sensor: [
+        {name: "", port: 0},
+        {name: "", port: 1},
+        {name: "", port: 2},
+        {name: "", port: 3},
     ]
 }
 
@@ -352,33 +353,20 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
         this.toDisplayFct({ clear: true });
     };
 
-    public mappPortMotor(port: any) {//TODO remove
-        //From MotorBlock come only letter, It must be mapped to numbers.
-        if (port == 'a') {
-            return 0;
-        }
-        if (port == 'b') {
-            return 1;
-        }
-        if (port == 'c') {
-            return 2;
-        }
-        if (port == 'd') {
-            return 3;
-        }
-    }
-
-    public getSensorPort (name: any){
+    public getSensorPort (name: any, sensor: string){
         for (let i = 0; i < 4; i++){
-            if (configSensorsPorts.Sensor[i].name == name){
+            if ((configSensorsPorts.Sensor[i].name == name)&&(sensor != "encoder")){
                 return configSensorsPorts.Sensor[i].port;
+            }
+            if ((otherMotorsConfig.Motor[i].name == name)&&(sensor == "encoder")){
+                return otherMotorsConfig.Motor[i].port;
             }
         }
         throw new Error('No Sensor');
     }
 
     public getSample = function (s, name: string, sensor: string, port: any, slot: string) {
-        port = this.getSensorPort(port);
+        port = this.getSensorPort(port,sensor);
         if (sensor == 'ultrasonic') {
             cmdConfigToORB.data.Sensor[port - 1].type = 1;
             if (slot == 'distance') {
@@ -441,7 +429,7 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
             s.push(this.timerGet(port));
             return;
         } else if (sensor == 'encoder') {
-            s.push(getEncoderValue(this.mappPortMotor(port), slot));
+            s.push(getEncoderValue(port, slot));
         }
         return;
     };
@@ -464,19 +452,20 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
         return speed;
     }
 
+
     public mapSingleMotor(name: any){//TODO map Motors to Ports, first for MotorOnAction -> check
         for (let i = 0; i < 4; i++){
             if (otherMotorsConfig.Motor[i].name == name){
-                let port = otherMotorsConfig.Motor[i].port - 1;//TODO test ports ???
+                let port = otherMotorsConfig.Motor[i].port;
                 return port;
             }
         }
-        return 9;
+        return 0;
     }
 
     public motorOnAction(name: string, port: any, duration: number, durationType: any, speed: number) {
         U.debug('motorOnAction' + ' port:' + port + ' duration:' + duration + ' durationType:' + durationType + ' speed:' + speed);
-        port = this.mapSingleMotor(name);//TODO test
+        port = this.mapSingleMotor(port.toUpperCase());//TODO test
         //port = this.mappPortMotor(port);
         speed = this.setSpeedToProcent(speed);
         speed = 10 * speed;
@@ -664,31 +653,37 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
         return 0;
     }
 
-    public setConfiguration(configuration: any) {
-        this.setActuators(configuration.ACTUATORS)
-        this.wait(3);
-        return 0;
+    public setConfigurationToDefault (){
+        for (let i = 0; i < 4; i++){
+            otherMotorsConfig.Motor[i].name = "";
+            otherMotorsConfig.Motor[i].port = i;
+            configSensorsPorts.Sensor[i].name = "";
+            configSensorsPorts.Sensor[i].port = i;
+        }
     }
 
-    public setActuators(configuration: any){
+    public setConfiguration(configuration: any) {
+        this.setConfigurationToDefault();
+        configuration = configuration.ACTUATORS;
         for (let actuators in configuration){
             let actuator = configuration[actuators];
             if (actuator.TYPE == "DIFFERENTIALDRIVE"){
                 this.setDifferentialDrive(actuator);
             }
-            if (actuator.TYPE == "MOTOR"){
+            else if (actuator.TYPE == "MOTOR"){
                 this.setSingleMotor(actuator, actuators);
             }
-            else if ((actuator.TYPE != "DIFFERENTIALDRIVE") && (actuator.TYPE != "MOTOR")) {
+            else if ((actuator.TYPE != "DIFFERENTIALDRIVE")&&(actuator.TYPE != "MOTOR")){
                 this.setSensor(actuator, actuators);
             }
         }
+        this.wait(3);
         return 0;
     }
 
     public setDifferentialDrive(differentialDrive: any){
         driveConfig.trackWidth = differentialDrive.BRICK_TRACK_WIDTH;
-        driveConfig.wheelDiameter = differentialDrive.WHEELDIAMETER;
+        driveConfig.wheelDiameter = differentialDrive.BRICK_WHEEL_DIAMETER;
         if (driveConfig.wheelDiameter != 0) {
             driveConfig.distanceToTics = 1000.0 / (10.0 * driveConfig.wheelDiameter * Math.PI);
         }
@@ -698,16 +693,16 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
     }
 
     public setSingleMotor (motor: any, name: any){
-        let port = this.mapSensorPort(motor.MOTOR);
-        otherMotorsConfig.Motor[port-1].port = port;
-        otherMotorsConfig.Motor[port-1].name = name;
+        let port = this.mapMotorPort(motor.MOTOR);
+        otherMotorsConfig.Motor[port].port = port;
+        otherMotorsConfig.Motor[port].name = name;
         return 0;
     }
 
     public setSensor(sensor: any, name: any){
-        let port = this.mapSensorPort(sensor.CONNECTOR) - 1;
-        configSensorsPorts.Sensor[port].name = name
-        configSensorsPorts.Sensor[port].port = port
+        let port = this.mapSensorPort(sensor.CONNECTOR);
+        configSensorsPorts.Sensor[port-1].name = name;
+        configSensorsPorts.Sensor[port-1].port = port;
         if (sensor.TYPE == 'TOUCH'){
             configSensor(port, 4, 0, 0);
             this.btInterfaceFct(cmdConfigToORB);
@@ -724,76 +719,18 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
     }
 
     public mapSensorPort (port: any){
-        if (port == "1"){return 1;}
-        if (port == "2"){return 2;}
-        if (port == "3"){return 3;}
-        if (port == "4"){return 4;}
+        if ((port == "S1")||(port == "1")){return 1;}
+        if ((port == "S2")||(port == "2")){return 2;}
+        if ((port == "S3")||(port == "3")){return 3;}
+        if ((port == "S4")||(port == "4")){return 4;}
     }
 
     public mapMotorPort (port: any){
-        if (port == "M1"){return 1;}
-        if (port == "M2"){return 2;}
-        if (port == "M3"){return 3;}
-        if (port == "M4"){return 4;}
+        if ((port == "M1") || (port == "1")){return 0;}
+        if ((port == "M2") || (port == "2")){return 1;}
+        if ((port == "M3") || (port == "3")){return 2;}
+        if ((port == "M4") || (port == "4")){return 3;}
     }
-//TODO remove if test done
-/*
-    public setConfiguration(configuration: any) {
-        driveConfig.trackWidth = configuration.ACTUATORS.Diff.BRICK_TRACK_WIDTH;
-        driveConfig.wheelDiameter = configuration.ACTUATORS.Diff.WHEELDIAMETER;
-        if (driveConfig.wheelDiameter != 0) {
-            driveConfig.distanceToTics = 1000.0 / (10.0 * driveConfig.wheelDiameter * Math.PI);
-        }
-        this.setConfigMotors(configuration.ACTUATORS);
-        this.setConfigSensors(configuration.SENSORS);
-        this.wait(3);
-        return 0;
-    }
-*/
-    /*
-    public setConfigSingleMotor(motor: any, idx: number) {
-        if (motor != undefined) {
-            if (motor.MOTOR_REVERSE == 'ON') {
-                driveConfig.orientation[idx] = -1;
-            }
-            if (motor.MOTOR_DRIVE == 'RIGHT') {
-                driveConfig.motorR.port = idx;
-                driveConfig.motorR.orientation = driveConfig.orientation[idx];
-            } else if (motor.MOTOR_DRIVE == 'LEFT') {
-                driveConfig.motorL.port = idx;
-                driveConfig.motorL.orientation = driveConfig.orientation[idx];
-            }
-        }
-    }
-*/
-    /*
-    public setConfigMotors(motors: any): number {
-        this.setConfigSingleMotor(motors.A, 0);
-        this.setConfigSingleMotor(motors.B, 1);
-        this.setConfigSingleMotor(motors.C, 2);
-        this.setConfigSingleMotor(motors.D, 3);
-        return 0;
-    }
-*/
-    /*
-    public setConfigSensors(sensors: any): number {
-        for (var i = 1; i < 5; i++) {
-            if (sensors[i] == 'TOUCH') {
-                configSensor(i, 4, 0, 0);
-                this.btInterfaceFct(cmdConfigToORB);
-            }
-            if (sensors[i] == 'ULTRASONIC' || sensors[i] == 'GYRO' || sensors[i] == 'INFRARED') {
-                configSensor(i, 1, 0, 0);
-                this.btInterfaceFct(cmdConfigToORB);
-            }
-            if (sensors[i] == 'COLOR') {
-                configSensor(i, 1, 2, 0);
-                this.btInterfaceFct(cmdConfigToORB);
-            }
-        }
-        return 0;
-    }
-*/
 
     public wait(seconds) {
         var stopTime = new Date().getSeconds();

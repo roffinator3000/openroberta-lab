@@ -90,7 +90,7 @@ public abstract class DifferentialMotorValidatorAndCollectorVisitorEv3 extends M
         int numRightMotors = 0;
         for ( ConfigurationComponent component : robotConfiguration.getConfigurationComponentsValues() ){
             if ( component.getComponentType().equals("MOTOR") ){
-                String motorPort = "M" + component.getOptProperty("MOTOR");
+                String motorPort =  component.getOptProperty("MOTOR");
                 if (motorPort.equals(leftMotor)){
                     numRightMotors++;
                 }else if ( motorPort.equals(rightMotor) ){

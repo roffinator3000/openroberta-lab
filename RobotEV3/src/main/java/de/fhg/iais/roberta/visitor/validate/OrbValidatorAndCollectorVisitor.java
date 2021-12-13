@@ -104,6 +104,7 @@ public class OrbValidatorAndCollectorVisitor extends CommonNepoValidatorAndColle
 	@Override
 	public Void visitGyroSensor(GyroSensor<Void> gyroSensor) {
 		checkSensorPort(gyroSensor);
+		String x = gyroSensor.getMode();
 		if ( !gyroSensor.getMode().equals(SC.RESET) ) {
 			usedHardwareBuilder.addUsedSensor(new UsedSensor(gyroSensor.getUserDefinedPort(), SC.GYRO, gyroSensor.getMode()));
 		}
