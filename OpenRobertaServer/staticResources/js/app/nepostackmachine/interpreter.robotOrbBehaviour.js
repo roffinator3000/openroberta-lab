@@ -15,8 +15,8 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RobotOrbBehaviour = void 0;
     var driveConfig = {
-        motorL: { port: 2, orientation: 1 },
-        motorR: { port: 3, orientation: 1 },
+        motorL: { port: 2, orientation: -1 },
+        motorR: { port: 3, orientation: -1 },
         orientation: [1, 1, 1, 1],
         wheelDiameter: 5.6,
         trackWidth: 22.8,

@@ -4,8 +4,8 @@ import * as C from './interpreter.constants';
 import * as U from './interpreter.util';
 
 var driveConfig = {
-    motorL: { port: 2, orientation: 1 },
-    motorR: { port: 3, orientation: 1 },
+    motorL: { port: 2, orientation: -1 },
+    motorR: { port: 3, orientation: -1 },
     orientation: [1, 1, 1, 1],
     wheelDiameter: 5.6,
     trackWidth: 22.8,

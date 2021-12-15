@@ -39,15 +39,12 @@ import de.fhg.iais.roberta.syntax.sensor.generic.TimerSensor;
 import de.fhg.iais.roberta.syntax.sensor.generic.TouchSensor;
 import de.fhg.iais.roberta.syntax.sensor.generic.UltrasonicSensor;
 import de.fhg.iais.roberta.visitor.IOrbVisitor;
-import de.fhg.iais.roberta.visitor.hardware.actor.DifferentialMotorValidatorAndCollectorVisitor;
+import de.fhg.iais.roberta.visitor.validate.DifferentialMotorValidatorAndCollectorVisitor;
 
-public class OrbValidatorAndCollectorVisitor extends CommonNepoValidatorAndCollectorVisitor implements IOrbVisitor<Void> {
-
-	private final DifferentialMotorValidatorAndCollectorVisitor differentialMotorValidatorAndCollectorVisitor;
+public class OrbValidatorAndCollectorVisitor extends DifferentialMotorValidatorAndCollectorVisitor implements IOrbVisitor<Void> {
 
 	public OrbValidatorAndCollectorVisitor(ConfigurationAst robotConfiguration, ClassToInstanceMap<IProjectBean.IBuilder<?>> beanBuilders) {
 		super(robotConfiguration, beanBuilders);
-		this.differentialMotorValidatorAndCollectorVisitor = new DifferentialMotorValidatorAndCollectorVisitor(this, robotConfiguration, beanBuilders);
 	}
 
 	@Override
@@ -72,22 +69,13 @@ public class OrbValidatorAndCollectorVisitor extends CommonNepoValidatorAndColle
 
 	@Override
 	public Void visitCurveAction(CurveAction<Void> curveAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitCurveActionForDiff(curveAction);
+		return super.visitCurveAction(curveAction);
 	}
 
-	private ConfigurationComponent getDifferentialDrive() {//TODO:
-		Map<String, ConfigurationComponent> configComponents = this.robotConfiguration.getConfigurationComponents();
-		for ( ConfigurationComponent component : configComponents.values() ) {
-			if ( component.getComponentType().equals("DIFFERENTIALDRIVE") ) {
-				return component;
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public Void visitDriveAction(DriveAction<Void> driveAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitDriveActionForDiff(driveAction);
+		return super.visitDriveAction(driveAction);
 	}
 
 	@Override
@@ -144,27 +132,27 @@ public class OrbValidatorAndCollectorVisitor extends CommonNepoValidatorAndColle
 
 	@Override
 	public Void visitMotorDriveStopAction(MotorDriveStopAction<Void> stopAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitMotorDriveStopAction(stopAction);
+		return super.visitMotorDriveStopAction(stopAction);
 	}
 
 	@Override
 	public Void visitMotorGetPowerAction(MotorGetPowerAction<Void> motorGetPowerAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitMotorGetPowerAction(motorGetPowerAction);
+		return super.visitMotorGetPowerAction(motorGetPowerAction);
 	}
 
 	@Override
 	public Void visitMotorOnAction(MotorOnAction<Void> motorOnAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitMotorOnAction(motorOnAction);
+		return super.visitMotorOnAction(motorOnAction);
 	}
 
 	@Override
 	public Void visitMotorSetPowerAction(MotorSetPowerAction<Void> motorSetPowerAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitMotorSetPowerAction(motorSetPowerAction);
+		return super.visitMotorSetPowerAction(motorSetPowerAction);
 	}
 
 	@Override
 	public Void visitMotorStopAction(MotorStopAction<Void> motorStopAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitMotorStopAction(motorStopAction);
+		return super.visitMotorStopAction(motorStopAction);
 	}
 
 	@Override
@@ -217,7 +205,7 @@ public class OrbValidatorAndCollectorVisitor extends CommonNepoValidatorAndColle
 
 	@Override
 	public Void visitTurnAction(TurnAction<Void> turnAction) {
-		return differentialMotorValidatorAndCollectorVisitor.visitTurnActionForDiff(turnAction);
+		return super.visitTurnAction(turnAction);
 	}
 
 	@Override
