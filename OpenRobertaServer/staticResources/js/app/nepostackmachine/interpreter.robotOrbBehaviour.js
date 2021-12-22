@@ -97,7 +97,7 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             { name: "", port: 3 },
         ]
     };
-    //Noch mode prüfen
+    //TODO: Check MODs
     function isSensorValueValid(id) {
         if (propFromORB.Sensor[id].valid == true) {
             return true;
@@ -182,7 +182,6 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
                     propFromORB.Sensor[id].value[0] = propFromORB.Sensor[id].value[0] - 65536;
                     if (slot == 'angle') {
                         return propFromORB.Sensor[id].value[0];
-                        ;
                     }
                     return propFromORB.Sensor[id].value;
                 }
@@ -460,8 +459,7 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
         RobotOrbBehaviour.prototype.mapSingleMotor = function (name) {
             for (var i = 0; i < 4; i++) {
                 if (otherMotorsConfig.Motor[i].name == name) {
-                    var port = otherMotorsConfig.Motor[i].port;
-                    return port;
+                    return otherMotorsConfig.Motor[i].port;
                 }
             }
             return 0;
@@ -613,11 +611,9 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             this.btInterfaceFct(cmd);
         };
         RobotOrbBehaviour.prototype.toneAction = function (name, frequency, duration) {
-            throw new Error('Method not implemented.');
             return 0;
         };
         RobotOrbBehaviour.prototype.showImageAction = function (_text, _mode) {
-            throw new Error('Method not implemented.');
             return 0;
         };
         RobotOrbBehaviour.prototype.displaySetBrightnessAction = function (_value) {

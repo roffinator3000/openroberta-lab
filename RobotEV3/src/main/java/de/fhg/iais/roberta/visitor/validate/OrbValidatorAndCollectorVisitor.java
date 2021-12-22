@@ -224,7 +224,7 @@ public class OrbValidatorAndCollectorVisitor extends DifferentialMotorValidatorA
 		return null;
 	}
 
-	protected void checkSensorPort(ExternalSensor<Void> sensor) {
+	protected void checkSensorPort(ExternalSensor<Void> sensor) {//TODO: switch : case ändern -> nicht besonders hübsch
 		ConfigurationComponent usedSensor = this.robotConfiguration.optConfigurationComponent(sensor.getUserDefinedPort());
 		if ( usedSensor == null ) {
 			addErrorToPhrase(sensor, "CONFIGURATION_ERROR_SENSOR_MISSING");
@@ -286,5 +286,24 @@ public class OrbValidatorAndCollectorVisitor extends DifferentialMotorValidatorA
 			}
 		}
 	}
+//******************************************************
+/*
+	protected void checkSensorPort(ExternalSensor<Void> sensor){
+		ConfigurationComponent usedSensor = this.robotConfiguration.optConfigurationComponent(sensor.getUserDefinedPort());
+		if ( usedSensor == null ) {
+			addErrorToPhrase(sensor, "CONFIGURATION_ERROR_SENSOR_MISSING");
+			return;
+		} else {
+			checkSensorType(sensor, usedSensor);
+		}
+	}
 
+	private void checkSensorType(ExternalSensor<Void> sensor, ConfigurationComponent configurationComponent) {
+		String typeWithoutSensing = sensor.getKind().getName().replace("_SENSING", "");
+		if ( !(typeWithoutSensing.equalsIgnoreCase(configurationComponent.getComponentType())) ) {
+			addErrorToPhrase(sensor, "CONFIGURATION_ERROR_SENSOR_WRONG");
+		}
+	}
+*/
+//********************************************************
 }
