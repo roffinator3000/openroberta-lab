@@ -97,7 +97,7 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             { name: "", port: 3 },
         ]
     };
-    //TODO: Check MODs
+    //TODO: Check MODs, one can more check, and wait for daten
     function isSensorValueValid(id) {
         if (propFromORB.Sensor[id].valid == true) {
             return true;
@@ -106,6 +106,38 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
             return false;
         }
     }
+    /*
+    function isSensorValueValid(id: number){
+        if ((propFromORB.Sensor[id].valid == true) && (propFromORB.Sensor[id].option == cmdConfigToORB.data.Sensor[id].option)) {
+            return true;
+        }
+        else {
+            return isSensorValueValidError(id,1);
+            //return false;
+        }
+    }
+    function isSensorValueValidError(id: number, error: number){
+        if ((propFromORB.Sensor[id].valid == true) && (propFromORB.Sensor[id].option == cmdConfigToORB.data.Sensor[id].option)) {
+            return true;
+        }
+        else {
+            error = error + 1;
+            if (error > 10){
+                return false;
+            }
+            else{
+                waitMs(1);
+                isSensorValueValidError(id, error);
+            }
+        }
+    }
+    //TODO:Integrationstest, prüfe lese, baue
+    function waitMs(ms) {//TODO: wait ms
+        let stopTime = new Date().getMilliseconds()
+        stopTime = stopTime + ms < 1000 ? stopTime + ms : ms - (1000 - stopTime);
+        while (new Date().getMilliseconds() < stopTime);
+    }
+    */
     function configSensor(id, type, mode, option) {
         id = id - 1;
         if (0 <= id && id < 4) {
@@ -742,7 +774,6 @@ define(["require", "exports", "./interpreter.aRobotBehaviour", "./interpreter.co
         RobotOrbBehaviour.prototype.encoderReset = function (port) {
             U.debug('encoderReset for ' + port);
             resetValueEncoder.Motor[this.mapSingleMotor(port)].reset = getMotorPos(this.mapSingleMotor(port)); //TODO test
-            //resetValueEncoder.Motor[this.mappPortMotor(port)].reset = getMotorPos(this.mappPortMotor(port))
         };
         RobotOrbBehaviour.prototype.gyroReset = function (port) {
             U.debug('gyroReset for ' + port);
