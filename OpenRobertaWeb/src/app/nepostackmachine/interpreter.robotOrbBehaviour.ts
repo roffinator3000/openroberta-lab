@@ -101,35 +101,28 @@ function isSensorValueValid(id: number): boolean {
     }
 }
 /*
-function isSensorValueValid(id: number){
-    if ((propFromORB.Sensor[id].valid == true) && (propFromORB.Sensor[id].option == cmdConfigToORB.data.Sensor[id].option)) {
+function isSensorValueValid(id: number): boolean{
+    if ((propFromORB.Sensor[id].valid == true) && (propFromORB.Sensor[id].option == cmdConfigToORB.data.Sensor[id].mode)) {
         return true;
     }
     else {
-        return isSensorValueValidError(id,1);
-        //return false;
+        return waitForValidValue(id);
     }
 }
-function isSensorValueValidError(id: number, error: number){
-    if ((propFromORB.Sensor[id].valid == true) && (propFromORB.Sensor[id].option == cmdConfigToORB.data.Sensor[id].option)) {
+function waitForValidValue(id: number){
+    waitMs(5000);
+    if ((propFromORB.Sensor[id].valid == true) && (propFromORB.Sensor[id].option == cmdConfigToORB.data.Sensor[id].mode)) {
         return true;
     }
-    else {
-        error = error + 1;
-        if (error > 10){
-            return false;
-        }
-        else{
-            waitMs(1);
-            isSensorValueValidError(id, error);
-        }
-    }
+    return false;
 }
 //TODO:Integrationstest, prüfe lese, baue
-function waitMs(ms) {//TODO: wait ms
-    let stopTime = new Date().getMilliseconds()
-    stopTime = stopTime + ms < 1000 ? stopTime + ms : ms - (1000 - stopTime);
-    while (new Date().getMilliseconds() < stopTime);
+function waitMs(milliseconds){
+    var start = new Date().getTime();
+    var end=0;
+    while( (end-start) < milliseconds){
+        end = new Date().getTime();
+    }
 }
 */
 function configSensor(id: number, type: number, mode: number, option: number) {
@@ -499,6 +492,7 @@ export class RobotOrbBehaviour extends ARobotBehaviour {
         //port = this.mappPortMotor(port);
         speed = this.setSpeedToProcent(speed);
         speed = 10 * speed;
+        speed *= -1;
         let timeToGo = 0;
         if (duration === undefined) {
             setMotor(port, 2, driveConfig.orientation[port] * speed, 0);
