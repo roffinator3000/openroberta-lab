@@ -313,10 +313,4 @@
 	<category name="TOOLBOX_VARIABLE" custom="VARIABLE" svg="true" />
 	<category name="TOOLBOX_PROCEDURE" custom="PROCEDURE"
 		svg="true" />
-	<category name="TOOLBOX_COMMUNICATION" svg="true">
-		<block type="robCommunication_startConnection" />
-		<block type="robCommunication_sendBlock" />
-		<block type="robCommunication_receiveBlock" />
-		<block type="robCommunication_waitForConnection" />
-	</category>
 </toolbox_set>
