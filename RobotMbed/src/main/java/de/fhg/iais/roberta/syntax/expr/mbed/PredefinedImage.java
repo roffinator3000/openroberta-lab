@@ -19,9 +19,6 @@ import de.fhg.iais.roberta.typecheck.BlocklyType;
 import de.fhg.iais.roberta.util.dbc.Assert;
 import de.fhg.iais.roberta.util.dbc.DbcException;
 
-/**
- * This class represents the <b>math_constant</b> block from Blockly
- */
 public class PredefinedImage<V> extends Expr<V> {
     private final PredefinedImageNames imageName;
 
@@ -32,21 +29,10 @@ public class PredefinedImage<V> extends Expr<V> {
         setReadOnly();
     }
 
-    /**
-     * creates instance of {@link PredefinedImage}. This instance is read only and can not be modified.
-     *
-     * @param imageName, see enum {@link PredefinedImage} for all defined images; must be <b>not</b> null,
-     * @param properties of the block (see {@link BlocklyBlockProperties}),
-     * @param comment added from the user,
-     * @return read only object of class {@link PredefinedImage}
-     */
     public static <V> PredefinedImage<V> make(PredefinedImageNames predefinedImage, BlocklyBlockProperties properties, BlocklyComment comment) {
         return new PredefinedImage<>(predefinedImage, properties, comment);
     }
 
-    /**
-     * @return name of the image.
-     */
     public PredefinedImageNames getImageName() {
         return this.imageName;
     }
@@ -71,10 +57,7 @@ public class PredefinedImage<V> extends Expr<V> {
         return "PredefinedImage [" + this.imageName + "]";
     }
 
-    /**
-     * This enum defines all possible predefined images.
-     */
-    public static enum PredefinedImageNames {
+    public enum PredefinedImageNames {
         HEART(
             "0,255,0,255,0\\n" //
                 + "255,255,255,255,255\\n"
@@ -335,9 +318,9 @@ public class PredefinedImage<V> extends Expr<V> {
                 + "0,0,0,0,0\\n" );
 
         private final String[] values;
-        private String imageString;
+        private final String imageString;
 
-        private PredefinedImageNames(String imageString, String... values) {
+        PredefinedImageNames(String imageString, String... values) {
             this.values = values;
             this.imageString = imageString;
         }

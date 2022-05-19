@@ -186,8 +186,9 @@ public interface IMbedVisitor<V>
      * @param singleMotorOnAction phrase to be visited
      */
     @Deprecated
+    // needed for transformator
     default V visitSingleMotorOnAction(SingleMotorOnAction<V> singleMotorOnAction) {
-        throw new DbcException("Block is no longer supported and should not be used!");
+        throw new DbcException("Block is no longer supported and should not be used! Consider using 'Motor On'");
     }
 
     /**
@@ -197,8 +198,9 @@ public interface IMbedVisitor<V>
      * @param singleMotorStopAction phrase to be visited
      */
     @Deprecated
+    // needed for transformator
     default V visitSingleMotorStopAction(SingleMotorStopAction<V> singleMotorStopAction) {
-        throw new DbcException("Block is no longer supported and should not be used!");
+        throw new DbcException("Block is no longer supported and should not be used! Consider using 'Motor Stop'");
     }
 
     /**
