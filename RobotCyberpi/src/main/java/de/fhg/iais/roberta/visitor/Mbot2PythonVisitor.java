@@ -262,8 +262,6 @@ public final class Mbot2PythonVisitor extends AbstractPythonVisitor implements I
         this.sb.append("cyberpi.console.clear()");
         return null;
     }
-
-    @Override
     public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
         this.sb.append("print(");
         serialWriteAction.getValue().accept(this);
