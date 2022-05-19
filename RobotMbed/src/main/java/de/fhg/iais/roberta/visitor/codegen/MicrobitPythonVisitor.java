@@ -480,16 +480,6 @@ public final class MicrobitPythonVisitor extends AbstractPythonVisitor implement
     }
 
     @Override
-    public Void visitLightAction(LightAction<Void> lightAction) {
-        throw new DbcException("Not supported!");
-    }
-
-    @Override
-    public Void visitLightStatusAction(LightStatusAction<Void> lightStatusAction) {
-        throw new DbcException("Not supported!");
-    }
-
-    @Override
     public Void visitMotorGetPowerAction(MotorGetPowerAction<Void> motorGetPowerAction) {
         throw new DbcException("Not supported!");
     }

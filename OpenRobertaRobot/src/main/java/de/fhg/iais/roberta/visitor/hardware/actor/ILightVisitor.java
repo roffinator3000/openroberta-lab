@@ -14,7 +14,4 @@ public interface ILightVisitor<V> extends IHardwareVisitor<V> {
     default V visitLightStatusAction(LightStatusAction<V> lightStatusAction) {
         throw new DbcException("status light action not implemented!");
     }
-
-    ;
-
 }

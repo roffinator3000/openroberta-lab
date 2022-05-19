@@ -123,12 +123,6 @@ public class NxtStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
     }
 
     @Override
-    public V visitLightStatusAction(LightStatusAction<V> lightStatusAction) {
-        JSONObject o = makeNode(C.STATUS_LIGHT_ACTION).put(C.NAME, "ev3").put(C.PORT, "internal");
-        return app(o);
-    }
-
-    @Override
     public V visitToneAction(ToneAction<V> toneAction) {
         toneAction.getFrequency().accept(this);
         toneAction.getDuration().accept(this);
