@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -1217,15 +1218,22 @@ public abstract class AbstractStackMachineVisitor<V> extends BaseVisitor<V> impl
         return app(o);
     }
 
+    @Override
+    public V visitSerialWriteAction(SerialWriteAction<V> serialWriteAction) {
+        serialWriteAction.getValue().accept(this);
+        JSONObject o = makeNode(C.SERIAL_WRITE_ACTION);
+        return app(o);
+    }
+
     private void addHighlightingToJump(JSONObject o) {
-        if ( !debugger ) {
+        if (!debugger) {
             return;
         }
         o.put(C.HIGHTLIGHT_MINUS, new ArrayList<>(openBlocks));
     }
 
     private void addDebugStatement(Phrase<?> phrase) {
-        if ( debugger ) {
+        if (debugger) {
             possibleDebugStops.add(phrase.getProperty().getBlocklyId());
             app(makeNode(C.COMMENT));
         }

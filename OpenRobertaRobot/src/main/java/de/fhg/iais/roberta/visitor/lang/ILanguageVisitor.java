@@ -1,5 +1,6 @@
 package de.fhg.iais.roberta.visitor.lang;
 
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import de.fhg.iais.roberta.syntax.lang.blocksequence.ActivityTask;
 import de.fhg.iais.roberta.syntax.lang.blocksequence.Location;
 import de.fhg.iais.roberta.syntax.lang.blocksequence.MainTask;
@@ -269,5 +270,7 @@ public interface ILanguageVisitor<V> extends IVisitor<V> {
     V visitWaitStmt(WaitStmt<V> waitStmt);
 
     V visitWaitTimeStmt(WaitTimeStmt<V> waitTimeStmt);
+
+    V visitSerialWriteAction(SerialWriteAction<V> serialWriteAction);
 
 }

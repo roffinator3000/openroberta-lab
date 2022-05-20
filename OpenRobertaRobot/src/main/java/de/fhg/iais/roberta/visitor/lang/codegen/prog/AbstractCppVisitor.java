@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.common.collect.ClassToInstanceMap;
@@ -736,9 +737,17 @@ public abstract class AbstractCppVisitor extends AbstractLanguageVisitor {
         throw new UnsupportedOperationException("should be overriden in a robot-specific class");
     }
 
+    @Override
+    public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
+        this.sb.append("Serial.println(");
+        serialWriteAction.getValue().accept(this);
+        this.sb.append(");");
+        return null;
+    }
+
     protected void addContinueLabelToLoop() {
         Integer lastLoop = this.currentLoop.getLast();
-        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(lastLoop) ) {
+        if (this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(lastLoop)) {
             nlIndent();
             this.sb.append("continue_loop" + this.currentLoop.getLast() + ":;");
         }

@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.common.collect.ClassToInstanceMap;
@@ -585,8 +586,16 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
     }
 
     @Override
+    public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
+        this.sb.append("System.out.println(");
+        serialWriteAction.getValue().accept(this);
+        this.sb.append(");");
+        return null;
+    }
+
+    @Override
     protected String getLanguageVarTypeFromBlocklyType(BlocklyType type) {
-        switch ( type ) {
+        switch (type) {
             case ANY:
             case COMPARABLE:
             case ADDABLE:

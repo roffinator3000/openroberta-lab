@@ -346,7 +346,7 @@ public class ArduinoValidatorAndCollectorVisitor extends MotorValidatorAndCollec
 
     @Override
     public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
-        requiredComponentVisited(serialWriteAction, serialWriteAction.getValue());
+        super.visitSerialWriteAction(serialWriteAction);
         usedHardwareBuilder.addUsedActor(new UsedActor(SC.SERIAL, SC.SERIAL));
         return null;
     }

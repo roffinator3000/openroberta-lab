@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -567,6 +568,12 @@ public abstract class CommonNepoValidatorAndCollectorVisitor extends AbstractVal
     @Override
     public Void visitWaitTimeStmt(WaitTimeStmt<Void> waitTimeStmt) {
         requiredComponentVisited(waitTimeStmt, waitTimeStmt.getTime());
+        return null;
+    }
+
+    @Override
+    public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
+        requiredComponentVisited(serialWriteAction, serialWriteAction.getValue());
         return null;
     }
 

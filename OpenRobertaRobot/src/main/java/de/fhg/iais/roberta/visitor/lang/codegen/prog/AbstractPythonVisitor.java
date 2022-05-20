@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import org.antlr.v4.runtime.misc.OrderedHashSet;
 
 import com.google.common.collect.ClassToInstanceMap;
@@ -752,6 +753,14 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
     @Override
     public String getEnumCode(String value) {
         return "'" + value.toLowerCase() + "'";
+    }
+
+    @Override
+    public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
+        this.sb.append("print(");
+        serialWriteAction.getValue().accept(this);
+        this.sb.append(")");
+        return null;
     }
 
     @Override

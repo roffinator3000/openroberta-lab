@@ -36,7 +36,6 @@ public class MbotValidatorAndCollectorVisitor extends ArduinoDifferentialMotorVa
         super(brickConfiguration, beanBuilders);
     }
 
-
     @Override
     public Void visitDriveAction(DriveAction<Void> driveAction) {
         checkAndVisitMotionParam(driveAction, driveAction.getParam());

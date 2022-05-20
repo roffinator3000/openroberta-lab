@@ -382,9 +382,4 @@ public class Mbot2ValidatorAndCollectorVisitor extends DifferentialMotorValidato
         }
         return null;
     }
-
-    public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
-        return null;
-    }
-
 }
