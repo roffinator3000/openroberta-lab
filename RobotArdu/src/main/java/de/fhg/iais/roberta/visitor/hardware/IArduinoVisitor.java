@@ -25,7 +25,7 @@ import de.fhg.iais.roberta.visitor.hardware.actor.IPinVisitor;
 import de.fhg.iais.roberta.visitor.hardware.actor.ISimpleSoundVisitor;
 
 public interface IArduinoVisitor<V>
-        extends IDisplayVisitor<V>, ISimpleSoundVisitor<V>, ILightVisitor<V>, IPinVisitor<V>, INeuralNetworkVisitor<V>, INano33BleSensorVisitor<V>, IHardwareVisitor<V> {
+        extends IDisplayVisitor<V>, ISimpleSoundVisitor<V>, ILightVisitor<V>, IPinVisitor<V>, INeuralNetworkVisitor<V>, IHardwareVisitor<V> {
 
     V visitDropSensor(DropSensor<V> dropSensor);
 
