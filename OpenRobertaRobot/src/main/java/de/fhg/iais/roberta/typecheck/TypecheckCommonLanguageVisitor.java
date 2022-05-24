@@ -76,6 +76,7 @@ import de.fhg.iais.roberta.syntax.lang.stmt.SensorStmt;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtFlowCon;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtList;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtTextComment;
+import de.fhg.iais.roberta.syntax.lang.stmt.TernaryExpr;
 import de.fhg.iais.roberta.syntax.lang.stmt.WaitStmt;
 import de.fhg.iais.roberta.syntax.lang.stmt.WaitTimeStmt;
 import de.fhg.iais.roberta.syntax.sensor.generic.TimerSensor;
@@ -283,6 +284,11 @@ public class TypecheckCommonLanguageVisitor extends BaseVisitor<BlocklyType> imp
 
     @Override
     public BlocklyType visitIfStmt(IfStmt<BlocklyType> ifStmt) {
+        return null;
+    }
+
+    @Override
+    public BlocklyType visitTernaryExpr(TernaryExpr<BlocklyType> ternaryExpr) {
         return null;
     }
 

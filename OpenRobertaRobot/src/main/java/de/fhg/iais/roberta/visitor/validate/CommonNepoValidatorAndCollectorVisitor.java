@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,6 +15,7 @@ import de.fhg.iais.roberta.blockly.generated.Data;
 import de.fhg.iais.roberta.components.ConfigurationAst;
 import de.fhg.iais.roberta.inter.mode.general.IListElementOperations;
 import de.fhg.iais.roberta.mode.general.ListElementOperations;
+import de.fhg.iais.roberta.syntax.action.serial.SerialWriteAction;
 import de.fhg.iais.roberta.syntax.lang.blocksequence.MainTask;
 import de.fhg.iais.roberta.syntax.lang.expr.Binary;
 import de.fhg.iais.roberta.syntax.lang.expr.BoolConst;
@@ -74,6 +74,7 @@ import de.fhg.iais.roberta.syntax.lang.stmt.Stmt;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtFlowCon;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtList;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtTextComment;
+import de.fhg.iais.roberta.syntax.lang.stmt.TernaryExpr;
 import de.fhg.iais.roberta.syntax.lang.stmt.WaitStmt;
 import de.fhg.iais.roberta.syntax.lang.stmt.WaitTimeStmt;
 import de.fhg.iais.roberta.typecheck.BlocklyType;
@@ -172,6 +173,14 @@ public abstract class CommonNepoValidatorAndCollectorVisitor extends AbstractVal
         requiredComponentVisited(ifStmt, ifStmt.getExpr());
         requiredComponentVisited(ifStmt, ifStmt.getThenList());
         requiredComponentVisited(ifStmt, ifStmt.getElseList());
+        return null;
+    }
+
+    @Override
+    public Void visitTernaryExpr(TernaryExpr<Void> ternaryExpr) {
+        requiredComponentVisited(ternaryExpr, ternaryExpr.getCondition());
+        requiredComponentVisited(ternaryExpr, ternaryExpr.getThenPart());
+        requiredComponentVisited(ternaryExpr, ternaryExpr.getElsePart());
         return null;
     }
 
